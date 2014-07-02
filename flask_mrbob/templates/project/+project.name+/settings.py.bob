@@ -1,0 +1,69 @@
+# -*- coding: utf-8 -*-
+
+"""
+    settings
+    ~~~~~~~~
+
+    Global settings for project.
+"""
+import os
+
+class BaseConfig(object):
+    DEBUG = False
+    SECRET_KEY = '{{{ project.secret_key }}}'
+    {{% if project.use_db -%}}
+    {{% set dburi = project.db_driver + '://' + project.db_user + ':' + project.db_pw + '@' + project.db_host + ':' + project.db_port + '/' + project.db_name %}}
+    SQLALCHEMY_DATABASE_URI = '{{{ dburi }}}'
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    {{%- endif %}}
+
+    CSRF_ENABLED = True
+    ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
+
+    BLUEPRINTS = [
+            'base.base',
+            'admin.admin',
+            'menu.menu',
+            {{% if project.blueprints %}}
+                {{% for bp in blueprints -%}}
+            '{{{bp}}}',
+                {{%- endfor %}}
+            {{% endif %}}
+
+    ]
+
+    EXTENSIONS = [
+            'ext.db',
+            'ext.login_manager',
+            'ext.toolbar',
+    ]
+
+    CONTEXT_PROCESSORS = [
+            'base.context_processors.common_context',                      
+            'base.context_processors.common_forms',
+            'menu.context_processors.nav_links',
+            'menu.context_processors.nav_title',
+    ]
+
+    TEMPLATE_FILTERS = [
+            'base.filters.date',
+            'base.filters.date_pretty',
+            'base.filters.datetime',
+            'base.filters.pluralize',
+            'base.filters.month_name',
+            'base.filters.markdown',
+    ]
+
+
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    DEBUG_TB_PROFILER_ENABLED = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+
+class TestingConfig(BaseConfig):
+    TESTING = True
+    {{% if project.use_db %}}
+    SQLALCHEMY_DATABASE_URI = '{{{ dburi }}}'
+    {{% endif %}}

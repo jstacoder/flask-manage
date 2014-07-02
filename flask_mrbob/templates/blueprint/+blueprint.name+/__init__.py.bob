@@ -1,0 +1,9 @@
+from flask import Blueprint
+
+{{{ blueprint.name }}} = Blueprint('{{{ blueprint.name }}}',__name__,
+                                    template_folder='{{{ blueprint.template_folder }}}',
+                                    {{% if blueprint.url_prefix != '' -%}}
+                                    url_prefix='{{{ blueprint.url_prefix }}}'{{%- endif %}})
+                                    
+
+from views import *

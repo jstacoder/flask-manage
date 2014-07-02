@@ -1,0 +1,6 @@
+{% if tokens %}
+    {% for t in tokens %}
+        {{ dir(t) }}
+        {{ t.user_email }}
+    {% endfor %}
+{% endif %}
